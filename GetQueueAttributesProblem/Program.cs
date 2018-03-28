@@ -39,7 +39,7 @@ namespace GetQueueAttributesProblem
 
             var queueAttributes = await client.GetQueueAttributesAsync(queueUrl, new List<string> { "DelaySeconds", "MessageRetentionPeriod", "RedrivePolicy" });
 
-            if (queueAttributes.DelaySeconds < 900)
+            if (queueAttributes.DelaySeconds < delaySeconds)
             {
                 throw new Exception();
             }
@@ -85,12 +85,13 @@ namespace GetQueueAttributesProblem
                 };
 
                 setFifoQueueAttributesRequest.Attributes.Add(QueueAttributeName.MessageRetentionPeriod, TimeSpan.FromDays(4).TotalSeconds.ToString(CultureInfo.InvariantCulture));
-                setFifoQueueAttributesRequest.Attributes.Add(QueueAttributeName.DelaySeconds, 900.ToString(CultureInfo.InvariantCulture));
+                setFifoQueueAttributesRequest.Attributes.Add(QueueAttributeName.DelaySeconds, delaySeconds.ToString(CultureInfo.InvariantCulture));
 
                 await client.SetQueueAttributesAsync(setFifoQueueAttributesRequest);
             }
         }
 
+        const int delaySeconds = 900;
         static readonly ConcurrentDictionary<string, string> queueUrls = new ConcurrentDictionary<string, string>();
     }
 }
